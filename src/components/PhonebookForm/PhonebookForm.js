@@ -1,7 +1,6 @@
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-// import { addContact } from '../../redux/contactSlice';
 import { AiOutlineUserAdd } from 'react-icons/ai';
 
 import {
@@ -11,25 +10,26 @@ import {
   ErrorMessage,
   Button,
 } from './PhonebookForm.styled';
+import { addContact } from 'redux/operations';
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required('Required'),
-  number: Yup.string().required('Required'),
+  phone: Yup.string().required('Required'),
 });
 
 export const PhonebookForm = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  const checkNewContact = NewContact => {
+  const contacts = useSelector(state => state.contacts.items);
+  const checkNewContact = newContact => {
     const duplicate = contacts.some(
       contact =>
         contact.name.toLowerCase().trim() ===
-        NewContact.name.toLowerCase().trim()
+        newContact.name.toLowerCase().trim()
     );
     if (duplicate) {
-      return alert(`${NewContact.name} is already in contacts`);
+      return alert(`${newContact.name} is already in contacts`);
     }
-    // dispatch(addContact(NewContact));
+    dispatch(addContact(newContact));
   };
   return (
     <div>
@@ -37,7 +37,7 @@ export const PhonebookForm = () => {
       <Formik
         initialValues={{
           name: '',
-          number: '',
+          phone: '',
         }}
         validationSchema={SignupSchema}
         onSubmit={(values, actions) => {
@@ -53,9 +53,9 @@ export const PhonebookForm = () => {
           </FormGroup>
 
           <FormGroup>
-            Number
-            <Field name="number" />
-            <ErrorMessage name="number" component="span" />
+            Phone
+            <Field name="phone" />
+            <ErrorMessage name="phone" component="span" />
           </FormGroup>
 
           <Button type="submit">
